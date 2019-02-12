@@ -21,6 +21,21 @@ const api = require('./api');
 
 //라우터 설정
 router.use('/api', api.routes());//api 라우트 적용
+
+// 404 에러 처리
+app.use(async (ctx, next)=>{
+   try{
+      await next();
+      if(ctx.status === 404){
+         ctx.body = '페이지를 찾을 수 없습니다.';
+      }
+   }catch(e){
+      console.log(e);
+   }
+})
+
+
+
 //라우터 적용전 bodyParser적용
 app.use(bodyParser());
 
@@ -28,11 +43,12 @@ app.use(bodyParser());
 app.use(session({
    maxAge: 86400000,
 }, app));
+
 //세션키 적용
 app.keys = [signKey];
 
 //passport
-const passport = require('lib/passport');
+const passport = require('api/auth/passport')(app);
 
 //app 인스턴스에 라우터 적용
 app.use(router.routes()).use(router.allowedMethods());

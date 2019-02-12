@@ -6,9 +6,11 @@ const api = new Router();
 api.use('/auth', auth.routes());
 
 api.get('/test', (ctx)=>{
-   ctx.session.val = 'set value';
-   console.log(ctx.session.val);
-   ctx.body = 'test 성공';
+   // ctx.session = {test: 'sdd'};
+   ctx.body = 'test 성공: '+JSON.stringify(ctx.session.user);
 });
+
+
+
 
 module.exports = api;
