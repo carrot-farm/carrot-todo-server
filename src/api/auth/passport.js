@@ -27,6 +27,7 @@ module.exports = (app) => {
       });
    })
 
+   //가입 처리
    const GoogleStrategy = require('passport-google-auth').Strategy;
    passport.use(
       new GoogleStrategy({
@@ -35,18 +36,18 @@ module.exports = (app) => {
          callbackURL: `${host}:` + (process.env.PORT || 4000) + '/api/auth/google/callback',
          passReqToCallback: true
       },
-         async function (req, token, tokenSecret, profile, done) {
+         async function (ctx, token, tokenSecret, profile, done) {
             const tools = require('lib/tools');
             const authCtrl = require('api/auth/auth.ctrl');
             const { emails, id, displayName } = profile;
-            const user = await authCtrl.joinUser({
+            //mongodb에 회원 가입 혹은 로그인 처리
+            const user = await authCtrl.joinUser(ctx, {
                email: emails[0].value,
-               strategyId: id,
                nickname: displayName,
                strategy: 'google',
-               ip: tools.getIp(req),
+               strategyId: id,
+               ip: tools.getIp(ctx),
             });
-            req.session.user = user;
             done(null, user);
          })
    )

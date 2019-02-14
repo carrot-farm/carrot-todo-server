@@ -7,3 +7,37 @@ exports.getIp = (req)=>{
    ;
    return ip.split(':').pop();
 };
+
+//======= objectId 검증 미들웨어
+exports.checkObjectId = (ctx, next)=>{
+   const { ObjectId } = require('mongoose').Types;
+   const {id} = ctx.params;
+   // console.log('***** checkObjectid: ', id, ObjectId.isValid(id));
+   if(!ObjectId.isValid(id)){
+      ctx.status=400;
+      return null;
+   }
+   return next();
+};
+
+//======= 로그인 확인 미들웨어
+exports.checkLogin = (ctx, next)=>{
+   // console.log('checkLogin',ctx.session.user);
+   if(!ctx.session.user){
+      ctx.status = 401;
+      return null;
+   }
+   return next();
+};
+
+//======= 유효성 검증
+exports.joiValidate = (ctx, schema)=>{
+   const Joi = require('joi');
+   const result = Joi.validate(ctx.request.body, schema);
+   if(result.error){
+      ctx.status = 400;
+      ctx.body = result.error;
+      return false;
+   }
+   return true;
+};

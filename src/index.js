@@ -34,8 +34,6 @@ app.use(async (ctx, next)=>{
    }
 })
 
-
-
 //라우터 적용전 bodyParser적용
 app.use(bodyParser());
 
@@ -48,7 +46,7 @@ app.use(session({
 app.keys = [signKey];
 
 //passport
-const passport = require('api/auth/passport')(app);
+const passport = require('./api/auth/passport')(app);
 
 //app 인스턴스에 라우터 적용
 app.use(router.routes()).use(router.allowedMethods());
@@ -56,5 +54,6 @@ app.listen(port, () => {
    console.log('listen to port ', port);
 });
 
+module.exports = app;
 
 

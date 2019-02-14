@@ -7,14 +7,16 @@ const userSchema = new Schema({
       type: String, required: true, unique: true, lowercase: true,
       index: true
    },
-   strategyId: String,
+   password: {
+      type: String, trimg: true
+   },
    nickname: {
-      type: String, unique: true
+      type: String, unique: true, trim: true,
    },
    strategy: {
       type: String, require: true
    },
-   password: String,
+   strategyId: String,
    joinTime: {
       type: Date, default: Date.now, require: true
    },

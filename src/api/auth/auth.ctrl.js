@@ -5,41 +5,47 @@ exports.auth_google = passport.authenticate('google');
 
 //========== 구글 콜백
 exports.auth_google_callback = passport.authenticate('google', {
-   // successRedirect: '/api/test',
-   // failureRedirect: '/'
-}, (req,user)=>{
-   console.log(user);
+   successRedirect: '/api/auth/userInfo',
+   failureRedirect: '/'
 });
 
 //========== 유저 가입
-exports.joinUser =  (profile)=>{
+exports.joinUser =  (ctx, profile)=>{
    const User = require('models/user');
    const {email, strategyId,strategy, nickname, ip} = profile;
 
    return new Promise( async (resolve, reject)=>{
       const userInfo = await User.findOne({email: email});
+      ctx.session.user = {
+         email: userInfo.email, 
+         strategy: userInfo.strategy, 
+         nickname: userInfo.nickname, 
+         _id: userInfo._id
+      };
       //해당 유저가 존재할 경우
       if(userInfo){
-         return  resolve({
-            email: userInfo.email, 
-            strategy: userInfo.strategy, 
-            nickname: userInfo.nickname, 
-            user: userInfo._id
-         });
+         return  resolve(ctx.session.user);
       }
       //해당 유저가 존재하지 않을 경우 가입 처리
       const user = new User({
-         email, strategyId, nickname, strategy,
+         ...ctx.session.user,
          joinIp: ip
       });
       //mongodb 저장.
       await user.save();
-      
       //promise 성공 반환
       return resolve({
-         email, strategy, nickname, user: user._id
+         email, strategy, nickname, _id: user._id
       });
    });
+};
+
+//========== 유저 정보
+exports.userInfo = ctx=>{
+   if(!ctx.session.user){
+      return ctx.status = 204;
+   }
+   ctx.body =  ctx.session.user;
 };
 
 //========== 로그인 유무 확인
@@ -51,7 +57,8 @@ exports.check = (ctx)=>{
 
 //========== 로그아웃
 exports.logout = async (ctx)=>{
-   ctx.session.user = null;
+   console.log('logout');
+   ctx.session = null;
    await ctx.logout();
    ctx.status = 204;
 };

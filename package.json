@@ -17,10 +17,15 @@
     "passport-google-auth": "^1.0.2"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "assert": "^1.4.1",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.9",
+    "should": "^13.2.3",
+    "supertest": "^3.4.2"
   },
   "scripts": {
     "start": "cross-env NODE_PATH=src node src",
-    "start:dev": "cross-env NODE_PATH=src nodemon --watch src/ src/index.js"
+    "start:dev": "cross-env NODE_PATH=src nodemon --watch src/ src/index.js",
+    "test": "node_modules/.bin/mocha src/index.spec.js"
   }
 }
