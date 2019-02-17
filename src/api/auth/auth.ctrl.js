@@ -5,7 +5,7 @@ exports.auth_google = passport.authenticate('google');
 
 //========== 구글 콜백
 exports.auth_google_callback = passport.authenticate('google', {
-   successRedirect: '/api/auth/userInfo',
+   successRedirect: '/api/auth/complete',
    failureRedirect: '/'
 });
 
@@ -57,8 +57,15 @@ exports.check = (ctx)=>{
 
 //========== 로그아웃
 exports.logout = async (ctx)=>{
-   console.log('logout');
    ctx.session = null;
    await ctx.logout();
    ctx.status = 204;
+};
+
+//========== 로그인 완료시
+exports.complete = ctx=>{
+   ctx.body = `<script>
+      window.opener.postMessage('login', "*");
+      window.close();
+   </script>`;
 };
