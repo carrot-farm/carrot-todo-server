@@ -20,10 +20,15 @@ const userSchema = new Schema({
    joinTime: {
       type: Date, default: Date.now, require: true
    },
+   _selectedCategory: { //현재 선택되어진 카테고리
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Category', 
+   },
    joinIp: {
       type: String, require: true
    }
 });
+
 
 module.exports = mongoose.model('User', userSchema);
 

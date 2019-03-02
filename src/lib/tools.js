@@ -12,7 +12,6 @@ exports.getIp = (req)=>{
 exports.checkObjectId = (ctx, next)=>{
    const { ObjectId } = require('mongoose').Types;
    const {id} = ctx.params;
-   // console.log('***** checkObjectid: ', id, ObjectId.isValid(id));
    if(!ObjectId.isValid(id)){
       ctx.status=400;
       return null;
@@ -40,4 +39,9 @@ exports.joiValidate = (ctx, schema)=>{
       return false;
    }
    return true;
+};
+
+//======= mongodb의 타입이 UTC로 고정되어 있어서 한국시간대로 맞추기
+exports.setKST = ()=>{
+   return new Date().getTime()+(3600000*9)
 };

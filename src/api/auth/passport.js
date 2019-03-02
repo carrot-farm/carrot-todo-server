@@ -37,18 +37,29 @@ module.exports = (app) => {
          passReqToCallback: true
       },
          async function (ctx, token, tokenSecret, profile, done) {
-            const tools = require('lib/tools');
-            const authCtrl = require('api/auth/auth.ctrl');
-            const { emails, id, displayName } = profile;
-            //mongodb에 회원 가입 혹은 로그인 처리
-            const user = await authCtrl.joinUser(ctx, {
-               email: emails[0].value,
-               nickname: displayName,
-               strategy: 'google',
-               strategyId: id,
-               ip: tools.getIp(ctx),
-            });
-            done(null, user);
+            try{
+               const tools = require('lib/tools');
+               const authCtrl = require('api/auth/auth.ctrl');
+               const { emails, id, displayName } = profile;
+               //mongodb에 회원 가입 혹은 로그인 처리
+               const user = await authCtrl.joinUser(ctx, {
+                  email: emails[0].value,
+                  nickname: displayName,
+                  strategy: 'google',
+                  strategyId: id,
+                  ip: tools.getIp(ctx),
+               });
+               //세션 저장
+               ctx.session.user = {
+                  email: user.email, 
+                  strategy: user.strategy, 
+                  nickname: user.nickname, 
+                  _id: user._id
+               };
+               done(null, user);
+            }catch(e){
+               ctx.throw(e);
+            }
          })
    )
 

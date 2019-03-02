@@ -8,6 +8,7 @@ route.get('/google', authCtrl.auth_google);
 route.get('/google/callback', authCtrl.auth_google_callback);
 route.get('/userinfo', authCtrl.userInfo);
 route.get('/check', authCtrl.check);
+route.get('/initialData', authCtrl.initialData);
 route.get('/logout', authCtrl.logout);
 
 module.exports = route;
